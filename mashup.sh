@@ -6,10 +6,10 @@ echo "i will make a mashup using $1"
 
 FILENAME=$1
 
-BASENAME = {basename $FILENAME .wav}
+BASENAME = basename $FILENAME .wav
 
 # intro
-sox $FILENAME ${BASENAME}_intro.wav trim 9.4 4.3
+sox $FILENAME $(BASENAME)_intro.wav trim 9.4 4.3
 
 # Reverse intro
 sox ${BASENSME}_intro.wav ${BASENAME}_rev.wav reverse
