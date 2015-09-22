@@ -5,7 +5,7 @@ OEXT=${OFILENAME##*.}
 BASEN=${OFILENAME%.*}
 EXTEN=$2
 
-if [ $OEXT != "wav" ]; then lame $OFILENAME ${BASEN}.wav
+if [ $OEXT != "wav" ]; then lame --decode $OFILENAME ${BASEN}.wav
   FILENAME=${BASEN}.wav
 else FILENAME=$OFILENAME
 fi
@@ -18,7 +18,8 @@ sox $FILENAME ${BASEN}_trimfadebroken${EXTEN} trim 0.0 1.0 speed 0.5 overdrive 2
 
 sox $FILENAME ${BASEN}_weird${EXTEN} trim 0.0 12.0 speed 2.0 remix 1 2 1 2 delay 5 7 remix 1,4 2,3 echos 0.8 0.7 15 0.6 50 0.8 30 0.7 200 0.5 trim 0.0 6.0 fade 0.1 =6.0 0.1 gain -n
 
-# if [$OFILENAME != $FILENAME]; then
-
+if [ $OFILENAME != $FILENAME ]; then
+rm $FILENAME
+fi
 
 echo "Done"
