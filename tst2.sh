@@ -34,12 +34,24 @@ YOLO="4"
 #echo $YOLO
 
 function checkifoption {
-if [ $1 == "-a" ]; then
+if [ $1 == "-input" ]; then
   shift
   if [ $1 == ".wav" ] || [ $1 == ".mp3" ]; then
-    echo $1
+    echo "input will be in" $1 "format"
+    YOLO=$1
+  elif [ $1 == "both" ]; then
+    YOLO="both"
   else
-    echo "error"
+    echo "error," $1 "format not recognized"
+  fi
+fi
+
+if [ $1 == "-output" ]; then
+  shift
+  if [ $1 == ".wav" ] || [ $1 == ".mp3" ]; then
+    echo "output will be in" $1 "format"
+  else
+    echo "error, " $1 "format not recognized"
   fi
 fi
 }
@@ -62,4 +74,8 @@ function checkopt {
     shift
   done
 }
+YOLO="hi"
+if [ $# > 0 ]; then
 checkopt $@
+fi
+echo $YOLO

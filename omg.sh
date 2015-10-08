@@ -1,33 +1,29 @@
 #! /bin/bash
 
-case $# in
-  1)
-  echo "$0 will be executed in current folder. the input and output file will be in $1 format"
-  ;;
-  2)
-  echo "$0 will be executed in current folder. The i"
+function checkifoption {
+  if [ $1 == "-input" ]; then
+  shift
+    if [ $1 == ".wav" ] || [ $1 == ".mp3" ]; then
+      echo "input will be in" $1 "format"
+      IXT=$1
+    elif [ $1 == "both" ]; then
+      echo "files in .wav and .mp3 will be processed"
+    else
+      echo "error," $1 "format not recognized"
+    fi
+  elif [ $1 == "-output" ]; then
+    shift
+    if [ $1 == ".wav" ] || [ $1 == ".mp3" ]; then
+      echo "output will be in" $1 "format"
+      OXT=$1
+    else
+    echo "error," $1 "format not recognized"
+    fi
+  fi
+}
 
-esac
-if [ $# -lt 1 ]; then
-  echo "not enough parameters, input and output file types required."
-else [ $# == 1 ]; then
-
-fi
-if [ -z "$1" ]; then echo "Error, output extension required."
-exit
-fi
-if [ -n "$2" ] && [ ! -d "$2" ] && ( [ "$2" != ".wav" ] || [ "$2" != ".mp3" ] ); then
-  echo "Error, $2 is not an existing directory nor an acceptable extension"
-  exit
- elif [ "$2" == ".wav" ] || [ "$2" == ".mp3" ] || [ "$2" == "audio" ]; then
-   EXTIN=$2
-fi
-if [ -n "$3" ] && [ ! -d "$3" ]; then
-  echo "Error, $3 is not an existing directory"
-  exit
-fi
-pprocess () {
-  for file in $2; do
+function pprocess {
+  for file in *$2; do
     OFILENAME=$file
     OEXT=${OFILENAME##*.}
     BASEN=${OFILENAME%.*}
@@ -60,19 +56,44 @@ pprocess () {
     if [ $OFILENAME != $FILENAME ]; then
     rm $FILENAME
     fi
+    echo "Done"
   done
   # if [ $2 -n ]; then
   #  cd..
   # fi
-   echo "Done"
-}
-checkoptions () {
-
-
-
-
 }
 
-for i in `seq 1 $#`; do
-checkoptions $i
-done
+function checkopt {
+  for ((i = 1; i <= $#; i+1 )); do
+     checkifoption $*
+     echo $*
+    shift
+  done
+}
+
+function ppp {
+  for file in *$1; do
+    BASEN=${file%.*}
+    mkdir trimfade
+    sox $file trimfade/${BASEN}_trimfade.wav trim 0.0 5.0 fade 0.1 =5.0 norm
+  done
+}
+
+function aaa {
+ echo $*
+
+}
+
+OXT=".wav"
+IXT=".wav"
+
+
+if [ -n $# ]; then
+  checkopt $*
+fi
+if [ INTPUTEXTN == "both" ]; then
+  pprocess $OUTPUTEXTN .wav
+  pprocess $OUTPUTEXTN .mp3
+else
+  pprocess $OXT $IXT
+fi
