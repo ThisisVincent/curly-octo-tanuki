@@ -157,7 +157,6 @@ cd ..
 DIR8=$(pwd)
 
 echo $0 "will be executed in "$DIR8", the resulting files will be created in" ${DIR8}/${DIR0}
-# echo "WARNING, if the sample rate of all files does not coincide, the composition will not be generated."
 echo "Do you want to proceed? (y/n)"
 read answer
 if [ $answer == "y" ]; then
