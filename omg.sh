@@ -4,20 +4,27 @@ function checkifoption {
   if [ $1 == "-input" ]; then
   shift
     if [ $1 == ".wav" ] || [ $1 == ".mp3" ]; then
-      echo "input will be in" $1 "format"
+      echo "Input will be in" $1 "format"
       IXT=$1
     elif [ $1 == "both" ]; then
-      echo "files in .wav and .mp3 will be processed"
+      echo "Files in .wav and .mp3 will be processed"
     else
-      echo "error," $1 "format not recognized, intput will be in .wav format"
+      echo "Error," $1 "format not recognized, intput will be in .wav format"
     fi
   elif [ $1 == "-output" ]; then
     shift
     if [ $1 == ".wav" ] || [ $1 == ".mp3" ]; then
-      echo "output will be in" $1 "format"
+      echo "Output will be in" $1 "format"
       OXT=$1
     else
-    echo "error," $1 "format not recognized, output will be in .wav format"
+    echo "Error," $1 "format not recognized, output will be in .wav format"
+    fi
+  elif [ $1 == "-directory" ]; then
+    shift
+    if [ -d $1 ]; then
+      cd $1
+    else
+      echo "Folder not found"
     fi
   fi
 }
@@ -74,6 +81,11 @@ function checkdirectory() {
 
 OXT=".wav"
 IXT=".wav"
+
+if [ -n $# ]; then
+  checkopt $*
+fi
+
 DIR0=$(checkdirectory edit)
 cd $DIR0
 DIR1=$(checkdirectory trimfade)
@@ -81,12 +93,19 @@ DIR2=$(checkdirectory trimfadereverb)
 DIR3=$(checkdirectory trimfadebroken)
 DIR4=$(checkdirectory weird)
 cd ..
-if [ -n $# ]; then
-  checkopt $*
-fi
-if [ INTPUTEXTN == "both" ]; then
-  pprocess $OUTPUTEXTN .wav
-  pprocess $OUTPUTEXTN .mp3
+DIR5=$(pwd)
+
+echo $0 "will be executed in "$DIR5", the resulting files will be created in" ${DIR5}/${DIR0}
+echo "Do you want to proceed? (y/n)"
+read answer
+if [ $answer == "y" ]; then
+  echo "Proceeding..."
+  if [ INTPUTEXTN == "both" ]; then
+    pprocess $OUTPUTEXTN .wav
+    pprocess $OUTPUTEXTN .mp3
+  else
+    pprocess $OXT $IXT
+  fi
 else
-  pprocess $OXT $IXT
+  echo "Operation canceled..."
 fi
